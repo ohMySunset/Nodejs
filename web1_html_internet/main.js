@@ -15,10 +15,10 @@ var app = http.createServer(function(request, response){
     if(pathname === '/'){
       // 루트라면 기존 코드를 실행
       if(queryData.id === undefined){
-      // 홈 요청일 때 (= 쿼리스트링이 없을 때)
-        var title = 'Welcome';
-        var description = 'Hello, Node.js';
-        var template = `
+        fs.readdir('../web1_html_internet/data', function(error, filelist){
+          console.log(filelist);
+          
+          var template = `
         <!doctype html>
     <html>
     <head>
@@ -39,6 +39,11 @@ var app = http.createServer(function(request, response){
     `;   
         response.writeHead(200);
         response.end(template);
+        })
+      // 홈 요청일 때 (= 쿼리스트링이 없을 때)
+        var title = 'Welcome';
+        var description = 'Hello, Node.js';
+        
    
     } else {
       // 홈 요청이 아닐때
@@ -67,7 +72,6 @@ var app = http.createServer(function(request, response){
         response.end(template);
       });
     } 
-
     } else {
       // 루트가 아니라면 새로운 코드를 실행
       response.writeHead(404);
