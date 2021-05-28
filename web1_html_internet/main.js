@@ -36,11 +36,7 @@ var app = http.createServer(function(request, response){
     var _url = request.url;
     var queryData = url.parse(_url, true).query;
     var pathname = url.parse(_url, true).pathname;
-    console.log(_url);
     var title = queryData.id;
-
-    console.log(url.parse(_url, true));
-    console.log(__dirname + _url);
 
     if(pathname === '/'){
       // 루트라면 기존 코드를 실행
@@ -81,7 +77,6 @@ var app = http.createServer(function(request, response){
       // 파일목록 불러오기
       fs.readdir('../web1_html_internet/data', function(error, filelist){
 
-      // 홈 요청일 때 (= 쿼리스트링이 없을 때)
       var title = 'WEB - Create';
       var list = templateList(filelist);
       var template = templateHTML(title, list , `
@@ -110,11 +105,12 @@ var app = http.createServer(function(request, response){
         var post = qs.parse(body);
         var title = post.title;
         var description = post.description;
-        console.log(title);
-        console.log(description);
+        fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+          // 리다이렉션 301 : 영구이동, 302 : 임시이동
+          response.writeHead(302, {Location: `/?id=${title}`});
+          response.end();
+        });
       });
-      response.writeHead(200);
-      response.end('success');
     }  
     else {
       // 루트가 아니라면 새로운 코드를 실행
