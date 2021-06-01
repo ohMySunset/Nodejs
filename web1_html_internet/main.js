@@ -65,7 +65,12 @@ var app = http.createServer(function(request, response){
       fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description){
         var title = queryData.id;
         var list = templateList(filelist);
-        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a><a href="/update?id=${title}">update</a>`);
+        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a><a href="/update?id=${title}">update</a>
+        <form action="delete_process" method="post">
+        <input type="hidden" name="id" value="${title}">
+        <input type="submit" value="delete">
+        </form>`);
+        
 
         response.writeHead(200);
         response.end(template);
@@ -157,7 +162,21 @@ var app = http.createServer(function(request, response){
           });         
         });
       });
-
+    } else if (pathname === '/delete_process'){
+      var body = '';
+      // 데이터를 수신할 때 마다 호출되는 콜백함수
+      request.on('data', function(data){
+        body = body + data;
+      });
+      // 더이상 수신할 데이터가 없는 경우 호출되는 콜백함수
+      request.on('end', function(){
+        var post = qs.parse(body);
+        var id = post.id;
+        fs.unlink(`data/${id}`, function(err){
+          response.writeHead(302, {Location: `/`});
+          response.end();
+        })
+      });
     }
     else {
       // 루트가 아니라면 새로운 코드를 실행
