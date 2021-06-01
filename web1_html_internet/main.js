@@ -3,7 +3,7 @@ var fs = require('fs');
 var url = require('url');
 var qs = require('querystring');
 
-function templateHTML(title, list, body){
+function templateHTML(title, list, body, control){
   return `
   <!doctype html>
     <html>
@@ -14,7 +14,7 @@ function templateHTML(title, list, body){
     <body>
       <h1><a href="/">WEB1</a></h1>
       ${list}
-      <a href="/create">create</a> 
+      ${control}
       ${body}
     </body>
     </html>
@@ -50,7 +50,7 @@ var app = http.createServer(function(request, response){
         var description = 'Hello, Node.js';
 
         var list = templateList(filelist);
-        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`);
+        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a>`);
        
         response.writeHead(200);
         response.end(template);
@@ -60,13 +60,12 @@ var app = http.createServer(function(request, response){
       // 홈 요청이 아닐때
       // 파일 목록 불러오기
       fs.readdir('../web1_html_internet/data', function(error, filelist){
-        console.log(filelist);
 
       // 파일데이터 읽어오기
       fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description){
         var title = queryData.id;
         var list = templateList(filelist);
-        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`);
+        var template = templateHTML(title, list , `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a><a href="/update?id=${title}">update</a>`);
 
         response.writeHead(200);
         response.end(template);
@@ -80,7 +79,7 @@ var app = http.createServer(function(request, response){
       var title = 'WEB - Create';
       var list = templateList(filelist);
       var template = templateHTML(title, list , `
-        <form action="http://localhost:3000/create_process" method="post">
+        <form action="/create_process" method="post">
           <p><input type="text" name="title" placeholder="title"></p>
           <p>
               <textarea name="description" placeholder="description"></textarea>
@@ -89,7 +88,7 @@ var app = http.createServer(function(request, response){
               <input type="submit"> 
           </p>
         </form>
-      `);
+      `, '');
      
       response.writeHead(200);
       response.end(template);
@@ -111,7 +110,55 @@ var app = http.createServer(function(request, response){
           response.end();
         });
       });
-    }  
+    } else if (pathname === '/update'){
+      // 글 수정처리 코드
+            // 파일 목록 불러오기
+            fs.readdir('../web1_html_internet/data', function(error, filelist){
+
+              // 파일데이터 읽어오기
+              fs.readFile(`data/${queryData.id}`, 'utf8', function(err, description){
+                var title = queryData.id;
+                var list = templateList(filelist);
+                var template = templateHTML(title, list , `
+                <form action="/update_process" method="post">
+                  <input type="hidden" name="id" value="${title}"
+                  <p><input type="text" name="title" placeholder="title" value="${title}"></p>
+                  <p>
+                      <textarea name="description" placeholder="description" >${description}</textarea>
+                  </p>
+                  <p>
+                      <input type="submit"> 
+                  </p>
+                </form>
+              `, `<a href="/create">create</a><a href="/update?id=${title}">update</a>`);
+        
+                response.writeHead(200);
+                response.end(template);
+              });
+            });
+      
+    } else if(pathname === '/update_process'){
+      // 수정 내용을 저장하는 코드
+      var body = '';
+      // 데이터를 수신할 때 마다 호출되는 콜백함수
+      request.on('data', function(data){
+        body = body + data;
+      });
+      // 더이상 수신할 데이터가 없는 경우 호출되는 콜백함수
+      request.on('end', function(){
+        var post = qs.parse(body);
+        var id = post.id;
+        var title = post.title;
+        var description = post.description;
+        fs.rename(`data/${id}`, `data/${title}`, function(err){
+          fs.writeFile(`data/${title}`, description, 'utf8', function(err){
+            response.writeHead(302, {Location: `/?id=${title}`});
+            response.end();
+          });         
+        });
+      });
+
+    }
     else {
       // 루트가 아니라면 새로운 코드를 실행
       response.writeHead(404);
