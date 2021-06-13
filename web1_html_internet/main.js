@@ -5,6 +5,15 @@ var qs = require('querystring');
 var template = require('./lib/template.js');
 var path = require('path');
 var sanitizeHtml = require('sanitize-html');
+var mysql = require('mysql');
+var db = mysql.createConnection({
+  host:'localhost',
+  user:'aia',
+  password:'aia',
+  database:'opentutorials'
+});
+db.connect
+
 
 var app = http.createServer(function(request, response){
     var _url = request.url;
@@ -15,19 +24,19 @@ var app = http.createServer(function(request, response){
     if(pathname === '/'){
       // 루트라면 기존 코드를 실행
       if(queryData.id === undefined){
-        // 파일목록 불러오기
-        fs.readdir('../web1_html_internet/data', function(error, filelist){
-          console.log(filelist);
+        
+        db.query('SELECT * FROM topic', function(error, topics){
+          console.log(topics);
+          var title = 'Welcome';
+          var description = 'Hello, Node.js';
+          var list = template.list(topics);
+          var html = template.HTML(title, list ,
+             `<h2>${title}</h2><p>${description}</p>`,
+              `<a href="/create">create</a>`
+              );
+          response.writeHead(200);
+          response.end(html);
 
-        // 홈 요청일 때 (= 쿼리스트링이 없을 때)
-        var title = 'Welcome';
-        var description = 'Hello, Node.js';
-
-        var list = template.list(filelist);
-        var html = template.HTML(title, list , `<h2>${title}</h2><p>${description}</p>`, `<a href="/create">create</a>`);
-       
-        response.writeHead(200);
-        response.end(html);
         })
    
     } else {
