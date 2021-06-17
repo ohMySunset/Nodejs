@@ -1,3 +1,4 @@
+  // 외부에서 모듈을 사용할 수 있도록 exports
 module.exports = {
     HTML:function(title, list, body, control){
      return `
