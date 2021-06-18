@@ -10,6 +10,7 @@ module.exports = {
        </head>
        <body>
          <h1><a href="/">WEB1</a></h1>
+         <a href="/author">author</a>
          ${list}
          ${control}
          ${body}

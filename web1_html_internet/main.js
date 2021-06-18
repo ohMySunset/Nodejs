@@ -3,7 +3,10 @@ var url = require('url');
 var qs = require('querystring');
 var template = require('./lib/template.js');
 var db = require('./lib/db.js');
-var topic = require('./lib/topic.js')
+var topic = require('./lib/topic.js');
+const { authorSelect } = require('./lib/template.js');
+var author = require('./lib/author');
+
 
 var app = http.createServer(function(request, response){
     var _url = request.url;
@@ -40,6 +43,8 @@ var app = http.createServer(function(request, response){
     } else if (pathname === '/delete_process'){
       // 삭제를 수행하는 코드
       topic.delete_process(request, response);
+  } else if(pathname==='/author'){
+    author.home(request, response);
   } else {
     
       // 루트가 아니라면 새로운 코드를 실행
