@@ -17,8 +17,8 @@ module.exports = {
        </body>
        </html>
      `;
-   },
-   list:function(topics){
+
+   },list:function(topics){
      var list = '<ul>';
            var i = 0;
            while(i<topics.length){
@@ -27,8 +27,8 @@ module.exports = {
            }
            list += '</ul>';
            return list;
-   },
-   authorSelect:function(authors, author_id){
+
+   },authorSelect:function(authors, author_id){
     var tag = '';
     var i = 0;
     while(i <authors.length){
@@ -44,6 +44,22 @@ module.exports = {
     <select name="author">
       ${tag}
     </select>`;
-  }
- }
 
+  },authorTable:function(authors){
+      var tag = '<table>';
+      var i = 0;
+      while(i<authors.length){
+        tag += `
+          <tr>
+            <td>${authors[i].name}</td>
+            <td>${authors[i].profile}</td>
+            <td>update</td>
+            <td>delete</td>
+          </tr>
+        `;
+        i++;
+      }
+    tag += '</table>'
+    return tag;
+   }
+}
