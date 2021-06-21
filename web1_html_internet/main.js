@@ -15,15 +15,14 @@ var app = http.createServer(function(request, response){
     var title = queryData.id;
 
     if(pathname === '/'){
-      // 루트라면 기존 코드를 실행
-      if(queryData.id === undefined){
-        
-      topic.home(request, response);
-   
-    } else {
-    // 홈 요청이 아닐때
-      topic.page(request, response);
-    } 
+        // 루트라면 기존 코드를 실행
+        if(queryData.id === undefined){     
+        topic.home(request, response);
+    
+        } else {
+        // 홈 요청이 아닐때
+          topic.page(request, response);
+        } 
     } else if(pathname === '/create'){
       // 글 생성화면
       topic.create(request, response);
@@ -43,14 +42,32 @@ var app = http.createServer(function(request, response){
     } else if (pathname === '/delete_process'){
       // 삭제를 수행하는 코드
       topic.delete_process(request, response);
-  } else if(pathname==='/author'){
-    author.home(request, response);
-  } else {
-    
-      // 루트가 아니라면 새로운 코드를 실행
-      response.writeHead(404);
-      response.end('Not Found');
-    }
+
+    } else if(pathname === '/author'){
+      // 저자 생성화면 구현
+      author.home(request, response);
+
+    } else if(pathname === '/author/create_process'){
+      // 저자생성 코드
+      author.create_process(request, response);
+
+    } else if(pathname === '/author/update'){
+      // 저자 수정 화면 구현
+      author.update(request, response);
+      
+    } else if(pathname === '/author/update_process'){
+      // 저자정보를 수정하는 코드
+      author.update_process(request, response);
+
+    } else if(pathname === '/author/delete_process'){
+      // 저자정보를 삭제하는 코드
+      author.delete_process(request, response);
+
+    } else {   
+        // 루트가 아니라면 새로운 코드를 실행
+        response.writeHead(404);
+        response.end('Not Found');
+      }
 });
 
 app.listen(3000);
