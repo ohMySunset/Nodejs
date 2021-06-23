@@ -32,6 +32,7 @@ exports.page = function(request, response){
                 throw error2;
               }
               //console.log(topic);
+              console.log(query.sql);
             var title = topic[0].title;
             var description = topic[0].description;
             var list = template.list(topics);
