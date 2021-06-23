@@ -3,6 +3,7 @@ var template = require('./template.js');
 var url = require('url');
 const { request } = require('http');
 var qs = require('querystring');
+var sanitizeHTML = require('sanitize-html');
 
 exports.home = function(request, response){
     db.query('SELECT * FROM topic', function(error, topics){
@@ -35,8 +36,8 @@ exports.page = function(request, response){
             var title = topic[0].title;
             var description = topic[0].description;
             var list = template.list(topics);
-            var html = template.HTML(title, list ,
-               `<h2>${title}</h2><p>${description}</p><p>by ${topic[0].name}</p>`,
+            var html = template.HTML(sanitizeHTML(title), list ,
+               `<h2>${sanitizeHTML(title)}</h2><p>${sanitizeHTML(description)}</p><p>by ${sanitizeHTML(topic[0].name)}</p>`,
                 `<a href="/create">create</a>
                 <a href="/update?id=${queryData.id}">update</a>
                   <form action="delete_process" method="post">
@@ -117,12 +118,12 @@ exports.update = function(request, response){
           db.query(`SELECT * FROM author`, function(error3, authors){     
         
             var list = template.list(topics);
-            var html = template.HTML(topic[0].title, list , `
+            var html = template.HTML(sanitizeHTML(topic[0].title), list , `
             <form action="/update_process" method="post">
               <input type="hidden" name="id" value="${topic[0].id}"
-              <p><input type="text" name="title" placeholder="title" value="${topic[0].title}"></p>
+              <p><input type="text" name="title" placeholder="title" value="${sanitizeHTML(topic[0].title)}"></p>
               <p>
-                  <textarea name="description" placeholder="description" >${topic[0].description}</textarea>
+                  <textarea name="description" placeholder="description" >${sanitizeHTML(topic[0].description)}</textarea>
               </p>
               <p>
               ${template.authorSelect(authors, topic[0].author_id)}

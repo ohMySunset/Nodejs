@@ -1,4 +1,5 @@
-  // 외부에서 모듈을 사용할 수 있도록 exports
+var sanitizeHTML = require('sanitize-html');
+// 외부에서 모듈을 사용할 수 있도록 exports
 module.exports = {
     HTML:function(title, list, body, control){
      return `
@@ -22,7 +23,7 @@ module.exports = {
      var list = '<ul>';
            var i = 0;
            while(i<topics.length){
-             list += `<li><a href="/?id=${topics[i].id}">${topics[i].title}</a></li>`;
+             list += `<li><a href="/?id=${topics[i].id}">${sanitizeHTML(topics[i].title)}</a></li>`;
              i += 1;
            }
            list += '</ul>';
@@ -37,7 +38,7 @@ module.exports = {
         // 기존 작성자 표시해주기
         selected = ' selected';
       }
-      tag += `<option value="${authors[i].id}" ${selected}>${authors[i].name}</option>`;
+      tag += `<option value="${authors[i].id}" ${selected}>${sanitizeHTML(authors[i].name)}</option>`;
       i++;
     }
     return `
@@ -51,8 +52,8 @@ module.exports = {
       while(i<authors.length){
         tag += `
           <tr>
-            <td>${authors[i].name}</td>
-            <td>${authors[i].profile}</td>
+            <td>${sanitizeHTML(authors[i].name)}</td>
+            <td>${sanitizeHTML(authors[i].profile)}</td>
             <td><a href="/author/update?id=${authors[i].id}">update</a></td>
             <td>
             <!-- 삭제는 form으로 처리한다. -->
