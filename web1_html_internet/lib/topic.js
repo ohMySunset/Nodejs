@@ -27,12 +27,11 @@ exports.page = function(request, response){
             if(error){
               throw error;
             }
-            db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`, [queryData.id], function(error2, topic){
+            db.query(`SELECT * FROM topic LEFT JOIN author ON topic.author_id=author.id WHERE topic.id=?`,[queryData.id], function(error2, topic){
               if(error2){
                 throw error2;
               }
               //console.log(topic);
-              console.log(query.sql);
             var title = topic[0].title;
             var description = topic[0].description;
             var list = template.list(topics);
@@ -44,7 +43,7 @@ exports.page = function(request, response){
                     <input type="hidden" name="id" value="${queryData.id}">
                     <input type="submit" value="delete">
                   </form>`
-                );
+                );       
             response.writeHead(200);
             response.end(html);
           });
